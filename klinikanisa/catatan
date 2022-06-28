@@ -1,0 +1,28 @@
+
+// SQL (script dijalankan di sql phpmyadmin) JALANKAN JIKA IMPORT DATABASE ERROR 
+
+// IMPLEMENTASI TRIGGER
+// table untuk trigger
+create table log_obat(id_log int(100) auto_increment primary key, id_obat int(10), nama_obat_lama varchar(100), nama_obat_baru varchar(100), waktu date not null)
+// trigger
+create trigger update_nama_obat before update on obat for each row insert into log_obat set id_obat=old.id_obat, nama_obat_lama = old.nama_obat, nama_obat_baru=new.nama_obat, waktu = now();
+// END IMPLEMENTASI TRIGGER
+
+
+// IMPLEMENTASI VIEW
+CREATE VIEW viewPenyakit AS SELECT a.id_berobat, b.nama_pasien, b.jenis_kelamin, b.umur, a.keluhan_pasien, a.hasil_diagnosa, a.tgl_berobat, c.nama_dokter FROM berobat a JOIN pasien b ON a.id_pasien=b.id_pasien JOIN dokter c ON a.id_dokter=c.id_dokter WHERE b.jenis_kelamin='L'
+// END IMPLEMENTASI VIEW
+
+
+// IMPLEMENTASI FUNCTION (untuk menampilkan total pasien pada halaman http://localhost/klinik/home/home.php)
+CREATE FUNCTION `fn_totalUsers`() RETURNS INT(11) UNSIGNED NOT DETERMINISTIC NO SQL SQL SECURITY DEFINER RETURN (SELECT COUNT(id_pasien) FROM pasien)
+// END IMPLEMENTASI FUNCTION
+
+
+// END SQL
+
+
+
+// Tidak Dijalankan SQL (untuk catatan)
+// IMPLEMENTASI SUBQUERY (menampilkan pasien yang belum berobat(sudah terdata tapi belum pernah berobat) di http://localhost/klinik/home/home.php)
+SELECT count(id_pasien) as total FROM pasien WHERE id_pasien NOT IN(SELECT DISTINCT id_pasien FROM berobat)
